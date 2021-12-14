@@ -42,7 +42,7 @@ exports.loginUser = catchAsyncErrors (async (req, res, next) => {
 	const isPasswordMatched = await user.comparePassword(password);
 
 	if(!isPasswordMatched) {
-		return next(new ErrorHandler('your password does not match', 401));
+		return next(new ErrorHandler('your password is incorrect', 401));
 	}
 
 	sendToken(user, 200, res);
@@ -77,16 +77,6 @@ exports.resetPassword = catchAsyncErrors (async (req, res, next) => {
 	await user.save();
 
 	sendToken(user, 200, res);
-})
-
-// Get currently logged in user details	=> /api/v1/me
-exports.getUserDetails = catchAsyncErrors(async (req, res, next) => {
-	const user = await User.findById(req.user.id);
-
-	res.status(200).json({
-		success: true,
-		user
-	})
 })
 
 // Forgot Password	=> /api/v1/password/forgot
@@ -129,6 +119,33 @@ exports.forgotPassword = catchAsyncErrors (async (req, res, next) => {
 
 		return next(new ErrorHandler(error.message, 500));
 	}
+})
+
+// Get currently logged in user details	=> /api/v1/me
+exports.getUserDetails = catchAsyncErrors(async (req, res, next) => {
+	const user = await User.findById(req.user.id);
+
+	res.status(200).json({
+		success: true,
+		user
+	})
+})
+
+// Update / Change password	=> /api/v1/password/update
+exports.updatePassword = catchAsyncErrors(async (req, res, next) => {
+	const user = await User.findById(req.user.id).select('+password');
+
+	// Check previous user password
+	const isMatched = await user.comparePassword(req.body.oldPassword);
+
+	if(!isMatched) {
+		return next(new ErrorHandler('current password is incorrect', 400));
+	}
+
+	user.password = req.body.password;
+	await user.save();
+
+	sendToken(user, 200, res);
 })
 
 // Logout user  => /api/v1/logout
