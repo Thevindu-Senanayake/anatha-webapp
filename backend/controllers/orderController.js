@@ -58,3 +58,28 @@ exports.myOrders = catchAsyncErrors( async (req, res, next) => {
 		orders
 	})
 })
+
+
+// Get all orders	=> /api/v1/admin/orders
+exports.allOrders = catchAsyncErrors( async (req, res, next) => {
+	const orders = await Order.find();
+
+	let totalAmount = 0;
+
+	orders.forEach(order => {
+		totalAmount += order.totalPrice;
+	})
+
+	let orderCount = 0;
+
+	orders.forEach(order => {
+		orderCount += 1;
+	})
+
+	res.status(200).json({
+		success: true,
+		orderCount,
+		totalAmount,
+		orders
+	})
+})
