@@ -7,7 +7,8 @@ const {
 	newProduct,
 	getSingleProduct,
 	updateProduct,
-	deleteProduct
+	deleteProduct,
+	createProductReview,
 
 } = require('../controllers/productController');
 
@@ -20,5 +21,9 @@ router.route('/admin/product/new').post(isAuthenticatedUser, newProduct, authori
 router.route('/admin/product/:productId')
 	.put(isAuthenticatedUser, updateProduct, authorizeRoles('admin'))
 	.delete(isAuthenticatedUser, deleteProduct, authorizeRoles('admin'));
+
+// Review Routes
+
+router.route('/review').put(isAuthenticatedUser, createProductReview)
 
 module.exports = router;
