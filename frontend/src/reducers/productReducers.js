@@ -6,7 +6,7 @@ import {
 
 } from '../constants/productConstants'
 
-export const productsReducer = (state = {products: []}, action) => {
+export const productsReducer = (state = { products: [] }, action) => {
 	switch (action.type) {
 		case ALL_PRODUCTS_REQUEST:
 			return {
