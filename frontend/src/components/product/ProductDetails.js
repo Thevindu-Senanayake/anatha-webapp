@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getProductDetails, clearErrors } from "../../actions/productActions";
 
 const ProductDetails = () => {
-	const disptach = useDispatch();
+	const dispatch = useDispatch();
 	const alert = useAlert();
 	const params = useParams();
 
@@ -19,13 +19,13 @@ const ProductDetails = () => {
 	);
 
 	useEffect(() => {
-		disptach(getProductDetails(params.id));
+		dispatch(getProductDetails(params.id));
 
 		if (error) {
 			alert.error(error);
-			disptach(clearErrors());
+			dispatch(clearErrors());
 		}
-	}, [disptach, alert, error, params.id]);
+	}, [dispatch, alert, error, params.id]);
 
 	return (
 		<Fragment>
@@ -33,15 +33,16 @@ const ProductDetails = () => {
 				<Loader />
 			) : (
 				<Fragment>
-					<div className="row f-flex justify-content-around">
+					<MetaData title={product.name} />
+					<div className="row d-flex justify-content-around">
 						<div className="col-12 col-lg-5 img-fluid" id="product_image">
 							<Carousel pause='hover'>
-								{product.images && product.images.map(image => (
-									<Carousel.Item key={image.public_id}>
-										<img className="d-block w-100" src={image.url} alt={product.title} />
-									</Carousel.Item>
-								))}
-							</Carousel>
+                        {product.images && product.images.map(image => (
+                           <Carousel.Item key={image.public_id}>
+                           	<img className="d-block w-100" src={image.url} alt={product.title} />
+                           </Carousel.Item>
+                        ))}
+                     </Carousel>
 						</div>
 
 						<div className="col-12 col-lg-5 mt-5">
