@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect } from "react";
 import Pagination from 'react-js-pagination';
+import { useParams } from 'react-router-dom';
 
 import MetaData from "./layout/MetaData";
 import Product from "./product/Product";
@@ -15,19 +16,22 @@ const Home = () => {
 
 	const alert = useAlert();
 	const dispatch = useDispatch();
+	const params = useParams();
 
 	const { loading, products, error, productCount, resPerPage } = useSelector(
 		(state) => state.products
 	);
+
+	const keyword = params.keyword
 
 	useEffect(() => {
 		if (error) {
 			return alert.error(error);
 		}
 
-		dispatch(getProducts(currentPage));
+		dispatch(getProducts(keyword, currentPage));
 
-	}, [dispatch, alert, error, currentPage]);
+	}, [dispatch, alert, error, keyword, currentPage]);
 
 	function setCurrentPageNo(pageNumber) {
 		setCurrentPage(pageNumber)
