@@ -38,7 +38,7 @@ const Home = () => {
 	const dispatch = useDispatch();
 	const params = useParams();
 
-	const { loading, products, error, productCount, resPerPage } = useSelector(
+	const { loading, products, error, productCount, resPerPage, filteredProductCount } = useSelector(
 		(state) => state.products
 	);
 
@@ -55,6 +55,11 @@ const Home = () => {
 
 	function setCurrentPageNo(pageNumber) {
 		setCurrentPage(pageNumber)
+	}
+
+	let count = productCount;
+	if (keyword) {
+		count = filteredProductCount
 	}
 
 	return (
@@ -132,7 +137,7 @@ const Home = () => {
 						</div>
 					</section>
 
-					{resPerPage <= productCount && (
+					{resPerPage <= count && (
 						<div className="d-flex justify-content-center mt-5">
 							<Pagination
 								acvitePage={currentPage}
