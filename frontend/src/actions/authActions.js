@@ -7,7 +7,7 @@ import {
 } from "../constants/authConstants";
 
 // Login
-export const Login = (email, password) => async (dispatch) => {
+export const login = (email, password) => async (dispatch) => {
 	try {
 		dispatch({ type: LOGIN_REQUEST });
 
@@ -33,4 +33,11 @@ export const Login = (email, password) => async (dispatch) => {
 			payload: error.response.data.message,
 		});
 	}
+};
+
+// clear errors
+export const clearErrors = () => async (dispatch) => {
+	dispatch({
+		type: CLEAR_ERRORS,
+	});
 };
