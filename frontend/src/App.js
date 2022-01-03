@@ -6,6 +6,7 @@ import Footer from "./components/layout/Footer";
 
 import Home from "./components/Home";
 import ProductDetails from "./components/product/ProductDetails";
+import Account from "./components/user/Account";
 
 import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
@@ -30,6 +31,7 @@ function App() {
 
 						<Route path="/login" element={<Login />} />
 						<Route path="/register" element={<Register />} />
+						<Route path="/me" element={<Account />} />
 					</Routes>
 				</div>
 				<Footer />

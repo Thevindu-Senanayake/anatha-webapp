@@ -68,10 +68,6 @@ const Header = () => {
 										Dashboard
 									</Link>
 								)}
-
-								<Link className="dropdown-item" to="/orders/me">
-									My Orders
-								</Link>
 								<Link className="dropdown-item" to="/me">
 									My Account
 								</Link>
