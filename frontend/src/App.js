@@ -11,6 +11,7 @@ import Account from "./components/user/Account";
 import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
 
+import ProtectedRoutes from "./components/routes/ProtectedRoutes";
 import { loadUser } from "./actions/authActions";
 import store from "./store";
 
@@ -31,7 +32,14 @@ function App() {
 
 						<Route path="/login" element={<Login />} />
 						<Route path="/register" element={<Register />} />
-						<Route path="/me" element={<Account />} />
+						<Route
+							path="/me"
+							element={
+								<ProtectedRoutes>
+									<Account />
+								</ProtectedRoutes>
+							}
+						/>
 					</Routes>
 				</div>
 				<Footer />
