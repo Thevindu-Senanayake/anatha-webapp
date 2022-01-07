@@ -7,6 +7,7 @@ import Footer from "./components/layout/Footer";
 import Home from "./components/Home";
 import ProductDetails from "./components/product/ProductDetails";
 import Account from "./components/user/Account";
+import UpdateAccount from "./components/user/UpdateAccount";
 
 import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
@@ -37,6 +38,14 @@ function App() {
 							element={
 								<ProtectedRoutes>
 									<Account />
+								</ProtectedRoutes>
+							}
+						/>
+						<Route
+							path="/me/update"
+							element={
+								<ProtectedRoutes>
+									<UpdateAccount />
 								</ProtectedRoutes>
 							}
 						/>
