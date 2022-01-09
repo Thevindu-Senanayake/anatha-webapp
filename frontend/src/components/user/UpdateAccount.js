@@ -12,6 +12,10 @@ import { UPDATE_ACCOUNT_RESET } from "../../constants/userConstants";
 const UpdateAccount = () => {
 	const [name, setName] = useState("");
 	const [email, setEmail] = useState("");
+	const [avatar, setAvatar] = useState("");
+	const [avatarPreview, setAvatarPreview] = useState(
+		"/images/default_avatar.jpg"
+	);
 
 	const alert = useAlert();
 	const dispatch = useDispatch();
@@ -25,6 +29,7 @@ const UpdateAccount = () => {
 		if (user) {
 			setName(user.name);
 			setEmail(user.email);
+			setAvatarPreview(user.avatar.url);
 		}
 
 		if (error) {
@@ -50,8 +55,22 @@ const UpdateAccount = () => {
 		const formData = new FormData();
 		formData.set("name", name);
 		formData.set("email", email);
+		formData.set("avatar", avatar);
 
 		dispatch(updateAccount(formData));
+	};
+
+	const onChange = (e) => {
+		const reader = new FileReader();
+
+		reader.onload = () => {
+			if (reader.readyState === 2) {
+				setAvatarPreview(reader.result);
+				setAvatar(reader.result);
+			}
+		};
+
+		reader.readAsDataURL(e.target.files[0]);
 	};
 
 	return (
@@ -91,9 +110,41 @@ const UpdateAccount = () => {
 							/>
 						</div>
 
+						<div class="form-group">
+							<label htmlFor="avatar_upload">Avatar</label>
+							<div class="d-flex align-items-center">
+								<div>
+									<figure class="avatar mr-3 item-rtl">
+										<img
+											src={avatarPreview}
+											class="rounded-circle"
+											alt="Avatar Preview"
+										/>
+									</figure>
+								</div>
+								<div class="custom-file">
+									<input
+										type="file"
+										name="avatar"
+										class="custom-file-input"
+										id="customFile"
+										accept="image/*"
+										onChange={onChange}
+									/>
+									<label
+										class="custom-file-label"
+										htmlFor="customFile"
+									>
+										Choose Avatar
+									</label>
+								</div>
+							</div>
+						</div>
+
 						<button
 							type="submit"
 							className="btn update-btn btn-block mt-4 mb-3"
+							disabled={loading ? true : false}
 						>
 							Update
 						</button>

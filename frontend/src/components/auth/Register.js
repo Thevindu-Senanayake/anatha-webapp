@@ -16,6 +16,11 @@ const Register = () => {
 
 	const { name, email, password } = user;
 
+	const [avatar, setAvatar] = useState("");
+	const [avatarPreview, setAvatarPreview] = useState(
+		"/images/default_avatar.jpg"
+	);
+
 	const alert = useAlert();
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
@@ -42,12 +47,26 @@ const Register = () => {
 		formData.set("name", name);
 		formData.set("email", email);
 		formData.set("password", password);
+		formData.set("avatar", avatar);
 
 		dispatch(register(formData));
 	};
 
 	const onChange = (e) => {
-		setUser({ ...user, [e.target.name]: e.target.value });
+		if (e.target.name === "avatar") {
+			const reader = new FileReader();
+
+			reader.onload = () => {
+				if (reader.readyState === 2) {
+					setAvatarPreview(reader.result);
+					setAvatar(reader.result);
+				}
+			};
+
+			reader.readAsDataURL(e.target.files[0]);
+		} else {
+			setUser({ ...user, [e.target.name]: e.target.value });
+		}
 	};
 
 	return (
@@ -99,13 +118,44 @@ const Register = () => {
 							/>
 						</div>
 
+						<div className="form-group">
+							<label htmlFor="avatar_upload">Avatar</label>
+							<div className="d-flex align-items-center">
+								<div>
+									<figure className="avatar mr-3 item-rtl">
+										<img
+											src={avatarPreview}
+											className="rounded-circle"
+											alt="Avatar Preview"
+										/>
+									</figure>
+								</div>
+								<div className="custom-file">
+									<input
+										type="file"
+										name="avatar"
+										className="custom-file-input"
+										id="customFile"
+										accept="iamges/*"
+										onChange={onChange}
+									/>
+									<label
+										className="custom-file-label"
+										htmlFor="customFile"
+									>
+										Choose Avatar
+									</label>
+								</div>
+							</div>
+						</div>
+
 						<button
 							id="register_button"
 							type="submit"
 							className="btn btn-block py-3"
 							disabled={loading ? true : false}
 						>
-							REGISTER
+							Register
 						</button>
 					</form>
 				</div>

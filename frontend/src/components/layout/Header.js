@@ -57,8 +57,8 @@ const Header = () => {
 							>
 								<figure className="avatar avatar-nav">
 									<img
-										src=""
-										// alt={user && user.name}
+										src={user.avatar && user.avatar.url}
+										alt={user && user.name}
 										className="rounded-circle"
 									/>
 								</figure>

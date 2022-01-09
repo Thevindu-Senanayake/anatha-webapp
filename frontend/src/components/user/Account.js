@@ -22,8 +22,8 @@ const Account = () => {
 							<figure className="avatar avatar-profile">
 								<img
 									className="rounded-circle img-fluid"
-									src=""
-									alt=""
+									src={user.avatar.url}
+									alt={user.name}
 								/>
 							</figure>
 							<Link
