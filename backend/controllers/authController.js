@@ -160,6 +160,10 @@ exports.updatePassword = catchAsyncErrors(async (req, res, next) => {
 	await user.save();
 
 	sendToken(user, 200, res);
+
+	console.log(req.body.oldPassword);
+	console.log(req.body.password);
+	// console.log(req.body);
 });
 
 // Update user Details	=> /api/v1/me/update

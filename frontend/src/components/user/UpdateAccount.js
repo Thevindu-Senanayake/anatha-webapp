@@ -5,9 +5,9 @@ import MetaData from "../layout/MetaData";
 
 import { useAlert } from "react-alert";
 import { useDispatch, useSelector } from "react-redux";
-import { updateAccount } from "../../actions/userActions";
+import { updateAccount } from "../../actions/authActions";
 import { loadUser, clearErrors } from "../../actions/authActions";
-import { UPDATE_ACCOUNT_RESET } from "../../constants/userConstants";
+import { UPDATE_ACCOUNT_RESET } from "../../constants/authConstants";
 
 const UpdateAccount = () => {
 	const [name, setName] = useState("");
@@ -47,7 +47,7 @@ const UpdateAccount = () => {
 				type: UPDATE_ACCOUNT_RESET,
 			});
 		}
-	}, [dispatch, isUpdated, alert, error]);
+	}, [dispatch, isUpdated, alert, error, navigate, user]);
 
 	const submitHandler = (e) => {
 		e.preventDefault();
@@ -110,29 +110,29 @@ const UpdateAccount = () => {
 							/>
 						</div>
 
-						<div class="form-group">
+						<div className="form-group">
 							<label htmlFor="avatar_upload">Avatar</label>
-							<div class="d-flex align-items-center">
+							<div className="d-flex align-items-center">
 								<div>
-									<figure class="avatar mr-3 item-rtl">
+									<figure className="avatar mr-3 item-rtl">
 										<img
 											src={avatarPreview}
-											class="rounded-circle"
+											className="rounded-circle"
 											alt="Avatar Preview"
 										/>
 									</figure>
 								</div>
-								<div class="custom-file">
+								<div className="custom-file">
 									<input
 										type="file"
 										name="avatar"
-										class="custom-file-input"
+										className="custom-file-input"
 										id="customFile"
 										accept="image/*"
 										onChange={onChange}
 									/>
 									<label
-										class="custom-file-label"
+										className="custom-file-label"
 										htmlFor="customFile"
 									>
 										Choose Avatar
