@@ -38,11 +38,7 @@ const UpdatePassword = () => {
 	const submitHandler = (e) => {
 		e.preventDefault();
 
-		const formData = new FormData();
-		formData.set("oldPassword", oldPassword);
-		formData.set("newPassword", newPassword);
-
-		const { data } = { formData };
+		const data = { oldPassword, newPassword };
 
 		dispatch(updatePassword(data));
 	};
