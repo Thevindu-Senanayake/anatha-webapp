@@ -32,10 +32,9 @@ const ForgotPassword = () => {
 	const submitHandler = (e) => {
 		e.preventDefault();
 
-		const formData = new FormData();
-		formData.set("email", email);
+		const data = { email };
 
-		dispatch(forgotPassword(email));
+		dispatch(forgotPassword(data));
 	};
 	return (
 		<Fragment>
