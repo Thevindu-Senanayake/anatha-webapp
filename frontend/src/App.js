@@ -13,6 +13,7 @@ import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
 import UpdatePassword from "./components/auth/UpdatePassword";
 import ForgotPassword from "./components/auth/ForgotPassword";
+import ResetPassword from "./components/auth/ResetPassword";
 
 import ProtectedRoutes from "./components/routes/ProtectedRoutes";
 import { loadUser } from "./actions/authActions";
@@ -36,6 +37,10 @@ function App() {
 						<Route path="/login" element={<Login />} />
 						<Route path="/register" element={<Register />} />
 						<Route path="/password/forgot" element={<ForgotPassword />} />
+						<Route
+							path="/password/reset/:token"
+							element={<ResetPassword />}
+						/>
 						<Route
 							path="/me"
 							element={
