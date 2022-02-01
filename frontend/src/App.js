@@ -4,6 +4,8 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Header from "./components/layout/Header";
 import Footer from "./components/layout/Footer";
 
+import Cart from "./components/cart/Cart";
+
 import Home from "./components/Home";
 import ProductDetails from "./components/product/ProductDetails";
 import Account from "./components/user/Account";
@@ -33,6 +35,8 @@ function App() {
 						<Route path="/" element={<Home />} />
 						<Route path="/search/:keyword" element={<Home />} />
 						<Route path="/product/:id" element={<ProductDetails />} />
+
+						<Route path="/cart" element={<Cart />} />
 
 						<Route path="/login" element={<Login />} />
 						<Route path="/register" element={<Register />} />
