@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 import Header from "./components/layout/Header";
@@ -22,11 +22,21 @@ import ResetPassword from "./components/auth/ResetPassword";
 import ProtectedRoutes from "./components/routes/ProtectedRoutes";
 import { loadUser } from "./actions/authActions";
 import store from "./store";
+import axios from "axios";
 
 function App() {
+	const [stripeApiKey, setStripeApiKey] = useState("");
+
 	useEffect(() => {
 		store.dispatch(loadUser());
-	});
+
+		async function fetchStripeApiKey() {
+			const { data } = await axios.get("/api/v1/stripeapi");
+			setStripeApiKey(data.stripeApiKey);
+		}
+
+		fetchStripeApiKey();
+	}, []);
 
 	return (
 		<Router>
