@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { countries } from "countries-list";
 
 import MetaData from "../layout/MetaData";
+import CheckoutSteps from "./CheckoutSteps";
 
 import { saveShippingInfo } from "../../actions/cartActions";
 
@@ -31,6 +32,8 @@ const Shipping = () => {
 	return (
 		<Fragment>
 			<MetaData title={"Shipping Info"} />
+
+			<CheckoutSteps shipping />
 
 			<div className="row wrapper">
 				<div className="col-10 col-lg-5">
