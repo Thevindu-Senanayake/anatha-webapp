@@ -6,6 +6,7 @@ import Footer from "./components/layout/Footer";
 
 import Cart from "./components/cart/Cart";
 import Shipping from "./components/cart/Shipping";
+import ConfirmOrder from "./components/cart/ConfirmOrder";
 
 import Home from "./components/Home";
 import ProductDetails from "./components/product/ProductDetails";
@@ -75,6 +76,14 @@ function App() {
 							element={
 								<ProtectedRoutes>
 									<Shipping />
+								</ProtectedRoutes>
+							}
+						/>
+						<Route
+							path="/order/confirm"
+							element={
+								<ProtectedRoutes>
+									<ConfirmOrder />
 								</ProtectedRoutes>
 							}
 						/>

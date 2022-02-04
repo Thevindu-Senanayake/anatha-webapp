@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { countries } from "countries-list";
@@ -25,8 +25,10 @@ const Shipping = () => {
 	const submitHandler = (e) => {
 		e.preventDefault();
 
-		dispatch(saveShippingInfo({ address, city, postalCode, phoneNumber }));
-		navigate("/confirm");
+		dispatch(
+			saveShippingInfo({ address, city, postalCode, phoneNumber, country })
+		);
+		navigate("/order/confirm");
 	};
 
 	return (
