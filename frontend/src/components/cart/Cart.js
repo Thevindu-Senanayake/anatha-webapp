@@ -1,7 +1,6 @@
 import React, { Fragment } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
-import Loader from "../layout/Loader";
 import MetaData from "../layout/MetaData";
 
 import { useAlert } from "react-alert";
@@ -10,6 +9,7 @@ import { addItemToCart, removeItemFromCart } from "../../actions/cartActions";
 
 const Cart = () => {
 	const dispatch = useDispatch();
+	const navigate = useNavigate();
 
 	const { cartItems } = useSelector((state) => state.cart);
 
@@ -32,11 +32,15 @@ const Cart = () => {
 
 		dispatch(addItemToCart(id, newQty));
 	};
+
+	const checkoutHandler = () => {
+		navigate('/login?redirect=shipping');
+	};
 	return (
 		<Fragment>
-			<MetaData title={"Shopping Cart"} />
+			<MetaData title={"Your Cart"} />
 			{cartItems.length === 0 ? (
-				<h2 className="mt-5">Your cart is empty</h2>
+				<h2 className="mt-5">Your Cart is Empty</h2>
 			) : (
 				<Fragment>
 					<h2 className="mt-5">
@@ -67,7 +71,7 @@ const Cart = () => {
 											</div>
 
 											<div className="col-4 col-lg-2 mt-4 mt-lg-0">
-												<p id="card_item_price">$ {item.price}</p>
+												<p id="card_item_price">${item.price}</p>
 											</div>
 
 											<div className="col-4 col-lg-3 mt-4 mt-lg-0">
@@ -83,6 +87,7 @@ const Cart = () => {
 													>
 														-
 													</span>
+
 													<input
 														type="number"
 														className="form-control count d-inline"
@@ -131,7 +136,7 @@ const Cart = () => {
 										{cartItems.reduce(
 											(acc, item) => acc + Number(item.quantity),
 											0
-										)}
+										)}{" "}
 										(Units)
 									</span>
 								</p>
@@ -153,6 +158,7 @@ const Cart = () => {
 								<button
 									id="checkout_btn"
 									className="btn btn-primary btn-block"
+									onClick={checkoutHandler}
 								>
 									Check out
 								</button>

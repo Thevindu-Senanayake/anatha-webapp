@@ -182,8 +182,6 @@ export const forgotPassword = (email) => async (dispatch) => {
 			},
 		};
 
-		console.log(email);
-
 		const { data } = await axios.post(
 			"/api/v1/password/forgot",
 			email,

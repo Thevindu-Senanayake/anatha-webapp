@@ -5,6 +5,7 @@ import Header from "./components/layout/Header";
 import Footer from "./components/layout/Footer";
 
 import Cart from "./components/cart/Cart";
+import Shipping from "./components/cart/Shipping";
 
 import Home from "./components/Home";
 import ProductDetails from "./components/product/ProductDetails";
@@ -66,6 +67,14 @@ function App() {
 							element={
 								<ProtectedRoutes>
 									<UpdatePassword />
+								</ProtectedRoutes>
+							}
+						/>
+						<Route
+							path="/shipping"
+							element={
+								<ProtectedRoutes>
+									<Shipping />
 								</ProtectedRoutes>
 							}
 						/>
