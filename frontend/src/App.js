@@ -7,6 +7,7 @@ import Footer from "./components/layout/Footer";
 import Cart from "./components/cart/Cart";
 import Shipping from "./components/cart/Shipping";
 import ConfirmOrder from "./components/cart/ConfirmOrder";
+import Payment from "./components/cart/Payment";
 
 import Home from "./components/Home";
 import ProductDetails from "./components/product/ProductDetails";
@@ -24,18 +25,25 @@ import { loadUser } from "./actions/authActions";
 import store from "./store";
 import axios from "axios";
 
+// Payment
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+
 function App() {
 	const [stripeApiKey, setStripeApiKey] = useState("");
 
 	useEffect(() => {
 		store.dispatch(loadUser());
 
-		async function fetchStripeApiKey() {
+		async function getStripApiKey() {
+			console.log("test1");
 			const { data } = await axios.get("/api/v1/stripeapi");
+			console.log("test2");
 			setStripeApiKey(data.stripeApiKey);
+			console.log("test3");
 		}
 
-		fetchStripeApiKey();
+		getStripApiKey();
 	}, []);
 
 	return (
@@ -97,6 +105,20 @@ function App() {
 								</ProtectedRoutes>
 							}
 						/>
+						{stripeApiKey && (
+							<Elements stripe={loadStripe(stripeApiKey)}>
+								<Routes>
+									<Route
+										path="/payment"
+										element={
+											<ProtectedRoutes>
+												<Payment />
+											</ProtectedRoutes>
+										}
+									/>
+								</Routes>
+							</Elements>
+						)}
 					</Routes>
 				</div>
 				<Footer />

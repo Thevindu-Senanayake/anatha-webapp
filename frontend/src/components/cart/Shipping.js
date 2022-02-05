@@ -10,7 +10,6 @@ import { saveShippingInfo } from "../../actions/cartActions";
 
 const Shipping = () => {
 	const countriesList = Object.values(countries);
-
 	const { shippingInfo } = useSelector((state) => state.cart);
 
 	const [address, setAddress] = useState(shippingInfo.address);
@@ -89,11 +88,11 @@ const Shipping = () => {
 							/>
 						</div>
 
-						<div class="form-group">
-							<label for="country_field">Country</label>
+						<div className="form-group">
+							<label htmlFor="country_field">Country</label>
 							<select
 								id="country_field"
-								class="form-control"
+								className="form-control"
 								value={country}
 								onChange={(e) => setCountry(e.target.value)}
 								required
