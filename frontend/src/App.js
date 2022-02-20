@@ -36,11 +36,8 @@ function App() {
 		store.dispatch(loadUser());
 
 		async function getStripApiKey() {
-			console.log("test1");
 			const { data } = await axios.get("/api/v1/stripeapi");
-			console.log("test2");
 			setStripeApiKey(data.stripeApiKey);
-			console.log("test3");
 		}
 
 		getStripApiKey();
@@ -106,18 +103,14 @@ function App() {
 							}
 						/>
 						{stripeApiKey && (
-							<Elements stripe={loadStripe(stripeApiKey)}>
-								<Routes>
-									<Route
-										path="/payment"
-										element={
-											<ProtectedRoutes>
-												<Payment />
-											</ProtectedRoutes>
-										}
-									/>
-								</Routes>
-							</Elements>
+							<Route
+								path="/payment"
+								element={
+									<Elements stripe={loadStripe(stripeApiKey)}>
+										<Payment />
+									</Elements>
+								}
+							/>
 						)}
 					</Routes>
 				</div>

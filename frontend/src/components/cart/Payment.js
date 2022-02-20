@@ -28,7 +28,6 @@ const options = {
 };
 
 const Payment = () => {
-	console.log("payment");
 	const stripe = useStripe();
 	const navigate = useNavigate();
 	const alert = useAlert();
@@ -94,9 +93,8 @@ const Payment = () => {
 			}
 		} catch (error) {
 			document.querySelector("#pay_btn").disabled = false;
-			alert.error(error.response.data.message);
-
-			console.log(error.response.data);
+			console.log(error);
+			// alert.error(error.response.data.message);
 		}
 	};
 
