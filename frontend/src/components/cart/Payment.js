@@ -59,7 +59,11 @@ const Payment = () => {
 				},
 			};
 
-			res = axios.post("/api/v1/payment/process", paymentData, config);
+			res = await axios.post("/api/v1/payment/process", paymentData, config);
+
+			console.log(res);
+			console.log(paymentData);
+			console.log(config);
 
 			const clientSecret = res.data.client_secret;
 
@@ -94,7 +98,7 @@ const Payment = () => {
 		} catch (error) {
 			document.querySelector("#pay_btn").disabled = false;
 			console.log(error);
-			// alert.error(error.response.data.message);
+			alert.error(error.response.data.message);
 		}
 	};
 
