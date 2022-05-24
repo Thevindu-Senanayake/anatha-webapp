@@ -8,6 +8,7 @@ import Cart from "./components/cart/Cart";
 import Shipping from "./components/cart/Shipping";
 import ConfirmOrder from "./components/cart/ConfirmOrder";
 import Payment from "./components/cart/Payment";
+import OrderSuccess from "./components/cart/OrderSuccess";
 
 import Home from "./components/Home";
 import ProductDetails from "./components/product/ProductDetails";
@@ -99,6 +100,14 @@ function App() {
 							element={
 								<ProtectedRoutes>
 									<ConfirmOrder />
+								</ProtectedRoutes>
+							}
+						/>
+						<Route
+							path="/success"
+							element={
+								<ProtectedRoutes>
+									<OrderSuccess />
 								</ProtectedRoutes>
 							}
 						/>

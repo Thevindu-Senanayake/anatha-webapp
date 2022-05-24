@@ -6,6 +6,8 @@ import { useAlert } from "react-alert";
 import MetaData from "../layout/MetaData";
 import CheckoutSteps from "./CheckoutSteps";
 
+import { createOrder, clearErrors } from "../../actions/orderActions";
+
 import {
 	useStripe,
 	useElements,
@@ -36,10 +38,27 @@ const Payment = () => {
 
 	const { user } = useSelector((state) => state.auth);
 	const { cartItems, shippingInfo } = useSelector((state) => state.cart);
+	const { error } = useSelector((state) => state.newOrder);
 
-	useEffect(() => {}, []);
+	useEffect(() => {
+		if (error) {
+			alert.error(error);
+			dispatch(clearErrors());
+		}
+	}, [dispatch, alert, error]);
+
+	const order = {
+		orderItems: cartItems,
+		shippingInfo,
+	};
 
 	const orderInfo = JSON.parse(sessionStorage.getItem("orderInfo"));
+
+	if (orderInfo) {
+		order.itemsPrice = orderInfo.itemsPrice;
+		order.shippingPrice = orderInfo.shippingPrice;
+		order.totalPrice = orderInfo.totalPrice;
+	}
 
 	const paymentData = {
 		amount: Math.round(orderInfo.totalPrice * 100),
@@ -60,10 +79,6 @@ const Payment = () => {
 			};
 
 			res = await axios.post("/api/v1/payment/process", paymentData, config);
-
-			console.log(res);
-			console.log(paymentData);
-			console.log(config);
 
 			const clientSecret = res.data.client_secret;
 
@@ -87,9 +102,17 @@ const Payment = () => {
 			} else {
 				// The payment is processed or not
 				if (result.paymentIntent.status === "succeeded") {
-					// TODO: New Order
+					order.paymentInfo = {
+						id: result.paymentIntent.id,
+						status: result.paymentIntent.status,
+					};
 
-					navigate("/orders");
+					alert.success("Payment successful");
+
+					console.log(order);
+					dispatch(createOrder(order));
+
+					navigate("/success");
 				} else {
 					alert.error("Payment failed");
 					document.querySelector("#pay_btn").disabled = false;
