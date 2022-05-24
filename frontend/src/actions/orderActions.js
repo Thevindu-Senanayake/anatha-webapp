@@ -35,11 +35,11 @@ export const createOrder = (order) => async (dispatch, getState) => {
 };
 
 // Get currently logged in user's orders
-export const myOrders = (id) => async (dispatch) => {
+export const myOrders = () => async (dispatch) => {
 	try {
 		dispatch({ type: MY_ORDERS_REQUEST });
 
-		const { data } = await axios.get(`/api/v1/order/me`);
+		const { data } = await axios.get("/api/v1/orders/me");
 
 		dispatch({
 			type: MY_ORDERS_SUCCESS,

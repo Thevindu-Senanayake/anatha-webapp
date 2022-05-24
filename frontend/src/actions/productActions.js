@@ -34,7 +34,6 @@ export const getProducts =
 				payload: error.response.data.message,
 			});
 
-			console.log(error);
 		}
 	};
 
@@ -54,7 +53,6 @@ export const getProductDetails = (id) => async (dispatch) => {
 			payload: error.response.data.message,
 		});
 
-		console.log(error);
 	}
 };
 

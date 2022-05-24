@@ -10,6 +10,8 @@ import ConfirmOrder from "./components/cart/ConfirmOrder";
 import Payment from "./components/cart/Payment";
 import OrderSuccess from "./components/cart/OrderSuccess";
 
+import ListOrders from "./components/order/ListOrders";
+
 import Home from "./components/Home";
 import ProductDetails from "./components/product/ProductDetails";
 import Account from "./components/user/Account";
@@ -84,6 +86,14 @@ function App() {
 							element={
 								<ProtectedRoutes>
 									<UpdatePassword />
+								</ProtectedRoutes>
+							}
+						/>
+						<Route
+							path="/orders/me"
+							element={
+								<ProtectedRoutes>
+									<ListOrders />
 								</ProtectedRoutes>
 							}
 						/>

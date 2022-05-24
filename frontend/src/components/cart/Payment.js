@@ -109,7 +109,6 @@ const Payment = () => {
 
 					alert.success("Payment successful");
 
-					console.log(order);
 					dispatch(createOrder(order));
 
 					navigate("/success");
@@ -120,7 +119,6 @@ const Payment = () => {
 			}
 		} catch (error) {
 			document.querySelector("#pay_btn").disabled = false;
-			console.log(error);
 			alert.error(error.response.data.message);
 		}
 	};
