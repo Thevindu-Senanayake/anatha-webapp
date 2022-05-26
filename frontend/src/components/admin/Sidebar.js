@@ -13,14 +13,14 @@ const Sidebar = () => {
 					</li>
 
 					<li>
-						<Link
-							to="#productSubmenu"
+						<a
+							href="#productSubmenu"
 							data-toggle="collapse"
 							aria-expanded="false"
 							className="dropdown-toggle"
 						>
 							<i className="fa fa-product-hunt"></i> Products
-						</Link>
+						</a>
 						<ul className="collapse list-unstyled" id="productSubmenu">
 							<li>
 								<Link to="/admin/products">
@@ -50,7 +50,7 @@ const Sidebar = () => {
 
 					<li>
 						<Link to="/admin/reviews">
-							<i className="fa fa-users"></i> Reviews
+							<i className="fa fa-star"></i> Reviews
 						</Link>
 					</li>
 				</ul>

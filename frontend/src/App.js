@@ -29,6 +29,7 @@ import ResetPassword from "./components/auth/ResetPassword";
 
 // Admin Imports
 import Dashboard from "./components/admin/Dashboard";
+import ProductList from "./components/admin/ProductList";
 
 import ProtectedRoutes from "./components/routes/ProtectedRoutes";
 import { loadUser } from "./actions/authActions";
@@ -154,6 +155,14 @@ function App() {
 						element={
 							<ProtectedRoutes isAdmin={true}>
 								<Dashboard />
+							</ProtectedRoutes>
+						}
+					/>
+					<Route
+						path="/admin/products"
+						element={
+							<ProtectedRoutes isAdmin={true}>
+								<ProductList />
 							</ProtectedRoutes>
 						}
 					/>
