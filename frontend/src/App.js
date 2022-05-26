@@ -4,25 +4,31 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Header from "./components/layout/Header";
 import Footer from "./components/layout/Footer";
 
+import Home from "./components/Home";
+import ProductDetails from "./components/product/ProductDetails";
+
+// Cart Imports
 import Cart from "./components/cart/Cart";
 import Shipping from "./components/cart/Shipping";
 import ConfirmOrder from "./components/cart/ConfirmOrder";
 import Payment from "./components/cart/Payment";
 import OrderSuccess from "./components/cart/OrderSuccess";
 
+// Order Imports
 import ListOrders from "./components/order/ListOrders";
 import OrderDetails from "./components/order/OrderDetails";
 
-import Home from "./components/Home";
-import ProductDetails from "./components/product/ProductDetails";
-import Account from "./components/user/Account";
-import UpdateAccount from "./components/user/UpdateAccount";
-
+// Auth and User Imports
 import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
+import Account from "./components/user/Account";
+import UpdateAccount from "./components/user/UpdateAccount";
 import UpdatePassword from "./components/auth/UpdatePassword";
 import ForgotPassword from "./components/auth/ForgotPassword";
 import ResetPassword from "./components/auth/ResetPassword";
+
+// Admin Imports
+import Dashboard from "./components/admin/Dashboard";
 
 import ProtectedRoutes from "./components/routes/ProtectedRoutes";
 import { loadUser } from "./actions/authActions";
@@ -142,6 +148,16 @@ function App() {
 						)}
 					</Routes>
 				</div>
+				<Routes>
+					<Route
+						path="/dashboard"
+						element={
+							<ProtectedRoutes isAdmin={true}>
+								<Dashboard />
+							</ProtectedRoutes>
+						}
+					/>
+				</Routes>
 				<Footer />
 			</div>
 		</Router>
