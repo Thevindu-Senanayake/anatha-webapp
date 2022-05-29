@@ -22,16 +22,18 @@ const Home = () => {
 	const [rating, setRating] = useState(0);
 
 	const categories = [
-		"books",
-		"pencils",
-		"cuters",
-		"pastles",
 		"Electronics",
-		"Headphones",
-		"Accessories",
 		"Cameras",
 		"Laptops",
+		"Accessories",
+		"Headphones",
 		"Food",
+		"Books",
+		"Clothes/Shoes",
+		"Beauty/Health",
+		"Sports",
+		"Outdoor",
+		"Home",
 	];
 
 	const alert = useAlert();
