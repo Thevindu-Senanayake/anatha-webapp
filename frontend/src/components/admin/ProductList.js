@@ -8,13 +8,22 @@ import Sidebar from "./Sidebar";
 
 import { useAlert } from "react-alert";
 import { useDispatch, useSelector } from "react-redux";
-import { getAdminProducts, clearErrors } from "../../actions/productActions";
+import {
+	getAdminProducts,
+	deleteProduct,
+	clearErrors,
+} from "../../actions/productActions";
+import { DELETE_PRODUCT_RESET } from "../../constants/productConstants";
 
 const ProductList = () => {
 	const alert = useAlert();
 	const dispatch = useDispatch();
+	const navigate = useNavigate();
 
 	const { loading, error, products } = useSelector((state) => state.products);
+	const { error: deleteError, isDeleted } = useSelector(
+		(state) => state.deleteProduct
+	);
 
 	useEffect(() => {
 		dispatch(getAdminProducts());
@@ -23,7 +32,18 @@ const ProductList = () => {
 			alert.error(error);
 			dispatch(clearErrors());
 		}
-	}, [dispatch, alert, error]);
+
+		if (deleteError) {
+			alert.error(deleteError);
+			dispatch(clearErrors());
+		}
+
+		if (isDeleted) {
+			alert.success("Product deleted successfully");
+			navigate("/admin/products");
+			dispatch({ type: DELETE_PRODUCT_RESET });
+		}
+	}, [dispatch, alert, error, deleteError, isDeleted, navigate]);
 
 	const setProducts = () => {
 		const data = {
@@ -70,7 +90,10 @@ const ProductList = () => {
 						>
 							<i className="fa fa-pencil"></i>
 						</Link>
-						<button className="btn btn-danger py-1 px-2 ml-2">
+						<button
+							className="btn btn-danger py-1 px-2 ml-2"
+							onClick={() => deleteProductHandler(product._id)}
+						>
 							<i className="fa fa-trash"></i>
 						</button>
 					</Fragment>
@@ -79,6 +102,10 @@ const ProductList = () => {
 		});
 
 		return data;
+	};
+
+	const deleteProductHandler = (id) => {
+		dispatch(deleteProduct(id));
 	};
 
 	return (

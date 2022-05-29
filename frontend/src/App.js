@@ -180,7 +180,7 @@ function App() {
 					/>
 				</Routes>
 
-				{!loading && user.role !== "admin" && <Footer />}
+				{!loading && user && user.role !== "admin" && <Footer />}
 			</div>
 		</Router>
 	);

@@ -35,6 +35,7 @@ const Register = () => {
 		}
 
 		if (error) {
+			console.log(error);
 			alert.error(error);
 			dispatch(clearErrors());
 		}
