@@ -56,22 +56,17 @@ export const newProduct = (productData) => async (dispatch) => {
 			},
 		};
 
-		console.log(productData);
-
 		const { data } = await axios.post(
 			`/api/v1/admin/product/new`,
 			productData,
 			config
 		);
 
-		console.log(data);
-
 		dispatch({
 			type: NEW_PRODUCT_SUCCESS,
 			payload: data,
 		});
 	} catch (error) {
-		console.log(error);
 		dispatch({
 			type: NEW_PRODUCT_FAIL,
 			payload: error.response.data.message,

@@ -68,9 +68,6 @@ const NewProduct = () => {
 			formData.append("images", image);
 		});
 
-		console.log(name, price, description, category, stock, seller, images);
-		console.log("newProduct:", formData);
-
 		dispatch(newProduct(formData));
 	};
 
