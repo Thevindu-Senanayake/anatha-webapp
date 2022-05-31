@@ -9,22 +9,22 @@ import Sidebar from "./Sidebar";
 import { useAlert } from "react-alert";
 import { useDispatch, useSelector } from "react-redux";
 import {
-	getAllOrders,
-	deleteOrder,
+	getAllUsers,
+	deleteUser,
 	clearErrors,
-} from "../../actions/orderActions";
-import { DELETE_ORDER_RESET } from "../../constants/orderConstants";
+} from "../../actions/authActions";
+import { DELETE_USER_RESET } from "../../constants/authConstants";
 
-const OrdersList = () => {
+const UsersList = () => {
 	const alert = useAlert();
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 
-	const { loading, error, orders } = useSelector((state) => state.allOrders);
-	const { isDeleted } = useSelector((state) => state.updateOrder);
+	const { loading, error, users } = useSelector((state) => state.allUsers);
+	const { isDeleted } = useSelector((state) => state.user);
 
 	useEffect(() => {
-		dispatch(getAllOrders());
+		dispatch(getAllUsers());
 
 		if (error) {
 			alert.error(error);
@@ -32,37 +32,37 @@ const OrdersList = () => {
 		}
 
 		if (isDeleted) {
-			alert.success("Order Deleted Successfully");
-			navigate("/admin/orders");
-			dispatch({ type: DELETE_ORDER_RESET });
+			alert.success("User Deleted Successfully");
+			navigate("/admin/users");
+			dispatch({ type: DELETE_USER_RESET });
 		}
-	}, [dispatch, alert, error, navigate, isDeleted]);
+	}, [dispatch, alert, error, isDeleted, navigate]);
 
-	const deleteOrderHandler = (id) => {
-		dispatch(deleteOrder(id));
+	const deleteUserHandler = (id) => {
+		dispatch(deleteUser(id));
 	};
 
-	const setOrders = () => {
+	const setUsers = () => {
 		const data = {
 			columns: [
 				{
-					label: "Order ID",
+					label: "User ID",
 					field: "id",
 					sort: "asc",
 				},
 				{
-					label: "Number of Items",
-					field: "numOfItems",
+					label: "Name",
+					field: "name",
 					sort: "asc",
 				},
 				{
-					label: "Amount",
-					field: "amount",
+					label: "Email",
+					field: "email",
 					sort: "asc",
 				},
 				{
-					label: "Status",
-					field: "status",
+					label: "Role",
+					field: "role",
 					sort: "asc",
 				},
 				{
@@ -73,31 +73,24 @@ const OrdersList = () => {
 			rows: [],
 		};
 
-		orders.forEach((order) => {
+		users.forEach((user) => {
 			data.rows.push({
-				id: order._id,
-				numOfItems: order.orderItems.length,
-				amount: `$${order.totalPrice}`,
-				stock: order.stock,
-				status:
-					order.orderStatus &&
-					String(order.orderStatus).includes("Delivered") ? (
-						<p style={{ color: "green" }}>{order.orderStatus}</p>
-					) : (
-						<p style={{ color: "red" }}>{order.orderStatus}</p>
-					),
+				id: user._id,
+				name: user.name,
+				email: user.email,
+				role: user.role,
 				actions: (
 					<Fragment>
 						<Link
-							to={`/admin/order/${order._id}`}
+							to={`/admin/user/${user._id}`}
 							className="btn btn-primary py-1 px-2"
 						>
-							<i className="fa fa-eye"></i>
+							<i className="fa fa-pencil"></i>
 						</Link>
 						<button className="btn btn-danger py-1 px-2 ml-2">
 							<i
 								className="fa fa-trash"
-								onClick={() => deleteOrderHandler(order._id)}
+								onClick={() => deleteUserHandler(user._id)}
 							></i>
 						</button>
 					</Fragment>
@@ -110,7 +103,7 @@ const OrdersList = () => {
 
 	return (
 		<Fragment>
-			<MetaData title={"All Orders"} />
+			<MetaData title={"All Users"} />
 			<div className="row">
 				<div className="col-12 col-md-2">
 					<Sidebar />
@@ -118,7 +111,7 @@ const OrdersList = () => {
 
 				<div className="col-12 col-md-10">
 					<Fragment>
-						<h1 className="my-5">All Orders</h1>
+						<h1 className="my-5">All Users</h1>
 
 						{loading ? (
 							<Loader />
@@ -127,7 +120,7 @@ const OrdersList = () => {
 								striped
 								bordered
 								hover
-								data={setOrders()}
+								data={setUsers()}
 								className="px-3"
 							/>
 						)}
@@ -138,4 +131,4 @@ const OrdersList = () => {
 	);
 };
 
-export default OrdersList;
+export default UsersList;

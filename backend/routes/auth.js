@@ -30,7 +30,7 @@ router.route('/logout').get(logoutUser);
 router.route('/me').get(isAuthenticatedUser, getUserDetails);
 router.route('/me/update').put(isAuthenticatedUser, updateUserDetails);
 
-router.route('/admin/allusers').get(isAuthenticatedUser, authorizeRoles('admin'), allUsers);
+router.route('/admin/users').get(isAuthenticatedUser, authorizeRoles('admin'), allUsers);
 router.route('/admin/user/:id')
 	.get(isAuthenticatedUser, authorizeRoles('admin'), getSingleUserDetails)
 	.put(isAuthenticatedUser, authorizeRoles('admin'), updateUserDetailsByAdmin)

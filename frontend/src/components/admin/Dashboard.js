@@ -9,11 +9,13 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { getAdminProducts } from "../../actions/productActions";
 import { getAllOrders } from "../../actions/orderActions";
+import { getAllUsers } from "../../actions/authActions";
 
 const Dashboard = () => {
 	const dispatch = useDispatch();
 
 	const { products } = useSelector((state) => state.products);
+	const { users } = useSelector((state) => state.allUsers);
 	const { orders, totalAmount, loading } = useSelector(
 		(state) => state.allOrders
 	);
@@ -28,6 +30,7 @@ const Dashboard = () => {
 	useEffect(() => {
 		dispatch(getAdminProducts());
 		dispatch(getAllOrders());
+		dispatch(getAllUsers());
 	}, [dispatch]);
 
 	return (
@@ -52,7 +55,10 @@ const Dashboard = () => {
 										<div className="card-body">
 											<div className="text-center card-font-size">
 												Total Amount
-												<br /> <b>${totalAmount}</b>
+												<br />
+												<b>
+													${totalAmount && totalAmount.toFixed(2)}
+												</b>
 											</div>
 										</div>
 									</div>
@@ -109,7 +115,7 @@ const Dashboard = () => {
 										<div className="card-body">
 											<div className="text-center card-font-size">
 												Users
-												<br /> <b>45</b>
+												<br /> <b>{users && users.length}</b>
 											</div>
 										</div>
 										<Link

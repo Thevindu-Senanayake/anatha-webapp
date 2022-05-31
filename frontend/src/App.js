@@ -36,6 +36,8 @@ import NewProduct from "./components/admin/NewProduct";
 import UpdateProduct from "./components/admin/UpdateProduct";
 import OrdersList from "./components/admin/OrdersList";
 import ProcessOrder from "./components/admin/ProcessOrder";
+import UsersList from "./components/admin/UsersList";
+import UpdateUser from "./components/admin/UpdateUser";
 
 import ProtectedRoutes from "./components/routes/ProtectedRoutes";
 import { loadUser } from "./actions/authActions";
@@ -202,6 +204,22 @@ function App() {
 						element={
 							<ProtectedRoutes isAdmin={true}>
 								<ProcessOrder />
+							</ProtectedRoutes>
+						}
+					/>
+					<Route
+						path="/admin/users"
+						element={
+							<ProtectedRoutes isAdmin={true}>
+								<UsersList />
+							</ProtectedRoutes>
+						}
+					/>
+					<Route
+						path="/admin/user/:id"
+						element={
+							<ProtectedRoutes isAdmin={true}>
+								<UpdateUser />
 							</ProtectedRoutes>
 						}
 					/>
