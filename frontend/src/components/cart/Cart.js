@@ -34,7 +34,7 @@ const Cart = () => {
 	};
 
 	const checkoutHandler = () => {
-		navigate('/login?redirect=shipping');
+		navigate("/login?redirect=shipping");
 	};
 	return (
 		<Fragment>
@@ -50,10 +50,10 @@ const Cart = () => {
 					<div className="row d-flex justify-content-between">
 						<div className="col-12 col-lg-8">
 							{cartItems.map((item) => (
-								<Fragment>
-									<hr key={item.product}/>
+								<Fragment key={item.product}>
+									<hr />
 
-									<div className="cart-item" >
+									<div className="cart-item">
 										<div className="row">
 											<div className="col-4 col-lg-3">
 												<img

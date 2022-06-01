@@ -253,7 +253,7 @@ const UpdateProduct = () => {
 											<img
 												name="product_images"
 												src={img.url}
-												key={img}
+												key={img.url}
 												alt={img.url}
 												className="mt-3 mr-2"
 												width="55"
