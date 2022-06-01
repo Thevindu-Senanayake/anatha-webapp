@@ -38,6 +38,7 @@ import OrdersList from "./components/admin/OrdersList";
 import ProcessOrder from "./components/admin/ProcessOrder";
 import UsersList from "./components/admin/UsersList";
 import UpdateUser from "./components/admin/UpdateUser";
+import ProductReviews from "./components/admin/ProductReviews";
 
 import ProtectedRoutes from "./components/routes/ProtectedRoutes";
 import { loadUser } from "./actions/authActions";
@@ -220,6 +221,14 @@ function App() {
 						element={
 							<ProtectedRoutes isAdmin={true}>
 								<UpdateUser />
+							</ProtectedRoutes>
+						}
+					/>
+					<Route
+						path="/admin/reviews"
+						element={
+							<ProtectedRoutes isAdmin={true}>
+								<ProductReviews />
 							</ProtectedRoutes>
 						}
 					/>
