@@ -11,5 +11,11 @@
 		"**/.settings": true,
 		"**/.factorypath": true
 	},
-	"explorerExclude.backup": null
+	"explorerExclude.backup": null,
+	"cSpell.words": [
+		"cloudinary",
+		"fileupload",
+		"Senanayake",
+		"Thevindu"
+	]
 }
