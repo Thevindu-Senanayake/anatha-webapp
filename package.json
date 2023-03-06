@@ -4,10 +4,10 @@
   "description": "e-commerce",
   "main": "server.js",
   "scripts": {
-    "start:backend": "node backend/server.js",
-    "backend:dev": "SET NODE_ENV=DEVELOPMENT& nodemon backend/server",
-    "backend:prod": "SET NODE_ENV=PRODUCTION& nodemon backend/server",
-    "seeder": "node backend/utils/seeder.js",
+    "backend": "SET NODE_ENV=PRODUCTION& ts-node backend/server.ts",
+    "backend:dev": "SET NODE_ENV=DEVELOPMENT& nodemon backend/server.ts",
+    "backend:prod": "SET NODE_ENV=PRODUCTION& nodemon backend/server.ts",
+    "seeder": "ts-node backend/utils/seeder.ts",
     "frontend": "cd frontend && node frontend",
     "start:dev": "yarn backend:dev & yarn frontend",
     "start:prod": "yarn backend:prod & yarn frontend"
@@ -19,17 +19,31 @@
     "body-parser": "^1.19.1",
     "cloudinary": "^1.27.1",
     "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
     "create-react-app": "^5.0.0",
-    "dotenv": "^10.0.0",
+    "dotenv": "^16.0.3",
     "express": "^4.17.1",
     "express-fileupload": "^1.2.1",
-    "jsonwebtoken": "^8.5.1",
-    "mongoose": "^6.0.14",
+    "jsonwebtoken": "^9.0.0",
+    "mongoose": "^7.0.0",
     "nodemailer": "^6.7.2",
-    "stripe": "^8.202.0",
+    "stripe": "^11.13.0",
     "validator": "^13.7.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.15"
+    "@types/bcryptjs": "^2.4.2",
+    "@types/body-parser": "^1.19.2",
+    "@types/cookie-parser": "^1.4.3",
+    "@types/cors": "^2.8.13",
+    "@types/dotenv": "^8.2.0",
+    "@types/express": "^4.17.17",
+    "@types/express-fileupload": "^1.4.1",
+    "@types/jsonwebtoken": "^9.0.1",
+    "@types/nodemailer": "^6.4.7",
+    "@types/range-parser": "^1.2.4",
+    "@types/validator": "^13.7.13",
+    "nodemon": "^2.0.15",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.5"
   }
 }

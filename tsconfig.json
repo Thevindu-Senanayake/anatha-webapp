@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "es2016",
+    "module": "commonjs",
+    "rootDir": "./backend",
+    "moduleResolution": "node",
+    "outDir": "./dist",
+
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+
+    "strict": true,
+    "skipLibCheck": true,
+    "noEmit": false,
+    "types": [
+      "node",
+      "@types/range-parser"
+    ],
+  },
+  "include": ["backend/*", "backend/*d.ts"],
+}
