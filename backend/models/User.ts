@@ -27,11 +27,9 @@ const userSchema = new mongoose.Schema<UserModel>({
   avatar: {
     public_id: {
       type: String,
-      required: true,
     },
     url: {
       type: String,
-      required: true,
     },
   },
   verified: {

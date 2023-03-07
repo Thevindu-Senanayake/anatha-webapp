@@ -16,19 +16,20 @@ import {
 import { isAuthenticatedUser, authorizeRoles } from "../middleware/auth";
 
 router.route("/products").get(getProducts);
-router.route("/admin/products").get(getAdminProducts);
+router
+  .route("/admin/products")
+  .get(isAuthenticatedUser, authorizeRoles("Admin"), getAdminProducts);
 router.route("/product/:productId").get(getSingleProduct);
 
 router
   .route("/admin/product")
-  .post(isAuthenticatedUser, newProduct, authorizeRoles("admin"));
+  .post(isAuthenticatedUser, authorizeRoles("admin"), newProduct);
 router
   .route("/admin/product/:productId")
-  .put(isAuthenticatedUser, updateProduct, authorizeRoles("admin"))
-  .delete(isAuthenticatedUser, deleteProduct, authorizeRoles("admin"));
+  .put(isAuthenticatedUser, authorizeRoles("admin"), updateProduct)
+  .delete(isAuthenticatedUser, authorizeRoles("admin"), deleteProduct);
 
 // Review Routes
-
 router
   .route("/review/:productId")
   .put(isAuthenticatedUser, createProductReview);

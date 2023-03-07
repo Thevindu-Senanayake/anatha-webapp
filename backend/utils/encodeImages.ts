@@ -30,9 +30,14 @@ const getMimeType = (filename: string): string => {
   }
 };
 
-readFileAsDataURL("path/to/image.png")
+// "C:\Users\thevi\Downloads\photo_2023-03-02_20-26-42.jpg"
+readFileAsDataURL("C:/Users/thevi/Downloads/photo_2023-03-02_20-26-42.jpg")
   .then((dataUrl) => {
-    console.log(dataUrl);
+    // console.log(dataUrl);
+    fs.writeFile("imageData.txt", dataUrl, (err) => {
+      if (err) throw err;
+      console.log("Data URL written to file.");
+    });
   })
   .catch((err) => {
     console.error(err);

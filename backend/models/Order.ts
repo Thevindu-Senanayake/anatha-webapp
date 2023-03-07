@@ -31,19 +31,7 @@ const orderSchema = new mongoose.Schema<OrderModel>({
   },
   orderItems: [
     {
-      name: {
-        type: String,
-        required: true,
-      },
       quantity: {
-        type: Number,
-        required: true,
-      },
-      image: {
-        type: String,
-        required: true,
-      },
-      price: {
         type: Number,
         required: true,
       },
@@ -83,7 +71,7 @@ const orderSchema = new mongoose.Schema<OrderModel>({
   orderStatus: {
     type: String,
     required: true,
-    default: "processing",
+    default: "Processing",
   },
   deliveredAt: {
     type: Date,

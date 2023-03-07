@@ -5,25 +5,33 @@ import Product from "../models/Product";
 
 import ErrorHandler from "../utils/errorHandler";
 import catchAsyncErrors from "../middleware/catchAsyncErrors";
+import { OrderModel } from "../types/types";
 
 // Create a new order	=> /api/v1/order/new
 export const newOrder = catchAsyncErrors(
   async (req: Request, res: Response, next: NextFunction) => {
-    const {
-      orderItems,
-      shippingInfo,
-      itemsPrice,
-      shippingPrice,
-      totalPrice,
-      paymentInfo,
-    } = req.body;
+    const { orderItems, shippingInfo, paymentInfo } = req.body;
+
+    // Get items price
+    let itemsPrice = 0;
+    let shippingPrice = 0;
+    orderItems.forEach(
+      async (item: { quantity: number; productId: string }) => {
+        const product = await Product.findById(item.productId);
+        if (!product) {
+          return next(new ErrorHandler("Something went wrong!", 500));
+        }
+        itemsPrice = product.price * item.quantity;
+        shippingPrice = product.shippingPrice;
+      }
+    );
 
     const order = await Order.create({
       orderItems,
       shippingInfo,
       itemsPrice,
       shippingPrice,
-      totalPrice,
+      totalPrice: itemsPrice + shippingPrice,
       paymentInfo,
       paidAt: Date.now(),
       user: req.body.user._id,

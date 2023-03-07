@@ -5,6 +5,8 @@ const router = express.Router();
 
 import {
   registerUser,
+  resendOTP,
+  verifyRegistration,
   loginUser,
   forgotPassword,
   resetPassword,
@@ -13,6 +15,8 @@ import {
 } from "../controllers/authController";
 
 router.route("/register").post(isLoggedUser, registerUser);
+router.route("/register/verify").get(isLoggedUser, verifyRegistration);
+router.route("/resendOTP").get(isLoggedUser, resendOTP);
 router.route("/login").post(isLoggedUser, loginUser);
 
 router.route("/password/forgot").post(isLoggedUser, forgotPassword);

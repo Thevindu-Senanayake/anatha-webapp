@@ -11,14 +11,18 @@ const productSchema = new mongoose.Schema<ProductModel>({
   price: {
     type: Number,
     required: [true, "Please enter price for product"],
-    maxLength: [7, "Product price cannot be longer than 7 characters"],
+    default: 0.0,
+  },
+  shippingPrice: {
+    type: Number,
+    required: [true, "Please enter shipping price for product"],
     default: 0.0,
   },
   description: {
     type: String,
     required: [true, "Please enter product description"],
   },
-  ratings: {
+  rating: {
     type: Number,
     default: 0,
   },
@@ -56,8 +60,9 @@ const productSchema = new mongoose.Schema<ProductModel>({
     },
   },
   seller: {
-    type: String,
-    required: [true, "Please enter product seller"],
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
   },
   stock: {
     type: Number,
@@ -89,11 +94,6 @@ const productSchema = new mongoose.Schema<ProductModel>({
       },
     },
   ],
-  addedBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    required: true,
-  },
   createdAt: {
     type: Date,
     default: Date.now,

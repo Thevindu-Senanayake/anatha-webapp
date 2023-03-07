@@ -7,6 +7,7 @@ import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import fileUpload from "express-fileupload";
 import errorMiddleware from "./middleware/errors";
+import dotenv from "dotenv";
 
 // import routes
 import auth from "./routes/auth";

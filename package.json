@@ -5,16 +5,18 @@
   "main": "server.js",
   "scripts": {
     "backend": "SET NODE_ENV=PRODUCTION& ts-node backend/server.ts",
-    "backend:dev": "SET NODE_ENV=DEVELOPMENT& nodemon backend/server.ts",
-    "backend:prod": "SET NODE_ENV=PRODUCTION& nodemon backend/server.ts",
+    "dev": "SET NODE_ENV=DEVELOPMENT& nodemon backend/server.ts",
+    "prod": "SET NODE_ENV=PRODUCTION& nodemon backend/server.ts",
     "seeder": "ts-node backend/utils/seeder.ts",
     "frontend": "cd frontend && node frontend",
     "start:dev": "yarn backend:dev & yarn frontend",
-    "start:prod": "yarn backend:prod & yarn frontend"
+    "start:prod": "yarn backend:prod & yarn frontend",
+    "encode": "ts-node backend/utils/encodeImages.ts"
   },
   "author": "Thevindu_Senanayake",
   "license": "ISC",
   "dependencies": {
+    "@sendgrid/mail": "^7.7.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.1",
     "cloudinary": "^1.27.1",

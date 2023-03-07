@@ -1,29 +1,169 @@
 import { NextFunction, Request, Response } from "express";
 
 import User from "../models/User";
+import OTP from "../models/OTP";
 import ErrorHandler from "../utils/errorHandler";
 import catchAsyncErrors from "../middleware/catchAsyncErrors";
 import sendToken from "../utils/sendToken";
 import sendEmail from "../utils/sendEmail";
+import generateOTP from "../utils/generateOTP";
 import crypto from "crypto";
 import cloudinary from "cloudinary";
+
+// options for cookie
+const options = {
+  expires: new Date(Date.now() + 7 * 1000 * 60 * 60 * 24),
+  httpOnly: true,
+};
 
 // Register a user  => /api/v1/register
 export const registerUser = catchAsyncErrors(
   async (req: Request, res: Response, next: NextFunction) => {
     const { name, email, password } = req.body;
 
-    const user = await User.create({
+    const user = await User.findOne({ email: email });
+
+    if (user) {
+      if (user.verified) {
+        return next(
+          new ErrorHandler(
+            `You Have Already Registered with this Email: ${email}`,
+            400
+          )
+        );
+      } else if (!user.verified) {
+        res.cookie("registrationCompleted", true, options);
+        res.cookie("email", email, options);
+        res.cookie("name", name, options);
+
+        return next(
+          new ErrorHandler(
+            "You Have Already Filled the Registration Form! Verify Your Account",
+            400
+          )
+        );
+      }
+    }
+
+    const otp = generateOTP();
+    const isSent = await sendEmail(
+      email,
+      process.env.SENDGRID_REGISTER_TEMPLATEID as string,
+      { otp, email, name }
+    );
+
+    if (!isSent) {
+      return next(
+        new ErrorHandler("Something went wrong! Fail to send email", 500)
+      );
+    }
+
+    await OTP.create({ email: email, code: otp });
+
+    await User.create({
       name,
       email,
       password,
       avatar: {
-        public_id: process.env.DEFAULT_AVATAR_ID,
-        url: process.env.DEFAULT_AVATAR_URL,
+        public_id: "",
+        url: "",
       },
     });
 
+    res.cookie("registrationCompleted", true, options);
+    res.cookie("email", email, options);
+    res.cookie("name", name, options);
+
+    res
+      .status(200)
+      .json({ success: true, message: `Email has sent to ${email}` });
+
+    // sendToken(user, 200, res);
+  }
+);
+
+export const verifyRegistration = catchAsyncErrors(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { code } = req.query;
+    const { email } = req.cookies;
+
+    if (!code) {
+      return next(new ErrorHandler("Code is required", 400));
+    }
+
+    if (!email) {
+      return next(
+        new ErrorHandler(
+          "Can't retrieve email from cookies! Try Filling Registration Form Again!",
+          500
+        )
+      );
+    }
+
+    const otp = await OTP.findOne({ email: email });
+
+    if (!otp) {
+      return next(new ErrorHandler("Otp Expired", 404));
+    }
+
+    if (otp.code !== code) {
+      return next(new ErrorHandler("Invalid Code", 400));
+    }
+
+    const user = await User.findOne({ email: email });
+
+    if (!user) {
+      return next(new ErrorHandler(`User not found with Email ${email}`, 404));
+    }
+
+    user.verified = true;
+
+    await user.save();
+
+    res.clearCookie("email", { path: "/" });
+    res.clearCookie("name", { path: "/" });
+    res.clearCookie("registrationCompleted", { path: "/" });
+
     sendToken(user, 200, res);
+  }
+);
+
+export const resendOTP = catchAsyncErrors(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { email, name } = req.cookies;
+
+    if (!email) {
+      return next(
+        new ErrorHandler(
+          "Can't retrieve email from cookies! Try Filling Registration Form Again!",
+          500
+        )
+      );
+    }
+
+    // generate otp
+    const otp = generateOTP();
+
+    // send confirmation email
+    const isSent = await sendEmail(
+      email,
+      process.env.SENDGRID_REGISTER_TEMPLATEID as string,
+      { otp, email, name }
+    );
+
+    if (!isSent) {
+      return next(new ErrorHandler("Fail Send Confirmation Email", 500));
+    }
+
+    // check if otp is already present and if delete the current otp record
+    await OTP.findOneAndDelete({ email: email });
+
+    await OTP.create({ code: otp, email: email });
+
+    res.status(200).json({
+      success: true,
+      message: "A confirmation Email has been sent to your email",
+    });
   }
 );
 
@@ -42,6 +182,12 @@ export const loginUser = catchAsyncErrors(
 
     if (!user) {
       return next(new ErrorHandler("Invalid Email or Password", 401));
+    }
+
+    if (!user.verified) {
+      return next(
+        new ErrorHandler("Verify Your Account Using OTP And try again", 401)
+      );
     }
 
     // Checks if password is correct or not
@@ -173,8 +319,8 @@ export const updateUserDetails = catchAsyncErrors(
       },
     };
 
-    // Update avatar
-    if (req.body.avatar !== "") {
+    // Update avatar if there's already a avatar for this user
+    if (req.body.user.avatar.url !== "" && req.body.avatar !== "") {
       const user = await User.findById(req.body.user._id);
 
       if (!user) {
@@ -182,8 +328,22 @@ export const updateUserDetails = catchAsyncErrors(
       }
 
       const image_id = user.avatar.public_id;
-      const res = await cloudinary.v2.uploader.destroy(image_id);
+      await cloudinary.v2.uploader.destroy(image_id);
 
+      const result = await cloudinary.v2.uploader.upload(req.body.avatar, {
+        folder: "avatars",
+        width: 150,
+        crop: "scale",
+      });
+
+      newUserData.avatar = {
+        public_id: result.public_id,
+        url: result.secure_url,
+      };
+    }
+
+    // Update avatar for the first time
+    if (req.body.user.avatar.url === "" && req.body.avatar !== "") {
       const result = await cloudinary.v2.uploader.upload(req.body.avatar, {
         folder: "avatars",
         width: 150,

@@ -32,10 +32,7 @@ export interface OrderModel extends mongoose.Document {
   };
   user: mongoose.Types.ObjectId;
   orderItems: {
-    name: string;
     quantity: number;
-    image: string;
-    price: number;
     productId: string;
   }[];
   paymentInfo: {
@@ -46,7 +43,7 @@ export interface OrderModel extends mongoose.Document {
   itemsPrice: number;
   shippingPrice: number;
   totalPrice: number;
-  orderStatus: "processing" | "Delivered" | "Shipped";
+  orderStatus: "Processing" | "Delivered" | "Shipped";
   deliveredAt: Date;
   createdAt: Date;
 }
@@ -55,8 +52,9 @@ export interface ProductModel extends mongoose.Document {
   _id: mongoose.Types.ObjectId;
   name: string;
   price: number;
+  shippingPrice: number;
   description: string;
-  ratings: number;
+  rating: number;
   images: {
     _id?: mongoose.Types.ObjectId;
     public_id: string;
@@ -75,7 +73,7 @@ export interface ProductModel extends mongoose.Document {
     | "Sports"
     | "Outdoor"
     | "Home";
-  seller: string;
+  seller: mongoose.Types.ObjectId;
   stock: number;
   numOfReviews: number;
   reviews: {
@@ -85,6 +83,5 @@ export interface ProductModel extends mongoose.Document {
     rating: number;
     comment: string;
   }[];
-  addedBy: mongoose.Types.ObjectId;
   createdAt: Date;
 }

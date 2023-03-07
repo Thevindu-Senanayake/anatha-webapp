@@ -1,53 +1,23 @@
-import nodemailer from "nodemailer";
+import sendGrid from "@sendgrid/mail";
 
 const sendEmail = async (
   email: string,
-  type: "confirmation" | "passReset",
-  resetUrl?: string,
-  otp?: string
+  templateId: string,
+  data: any
 ): Promise<boolean> => {
+  sendGrid.setApiKey(process.env.SENDGRID_API_KEY as string);
+
+  const msg = {
+    to: email,
+    subject: "Legendary Store",
+    from: process.env.SENDGRID_MAIL as string,
+    templateId: templateId,
+    dynamic_template_data: data,
+  };
   try {
-    const user = process.env.SMTP_USERNAME;
-    const password = process.env.SMTP_PASSWORD;
-
-    const transporter = nodemailer.createTransport({
-      // host: "smtp.example.com",
-      // port: 465,
-      // secure: true,
-      service: "gmail",
-      auth: {
-        user: user,
-        pass: password,
-      },
-    });
-
-    if (!otp && !resetUrl) {
-      return false;
-    }
-
-    let mailOptions = {};
-
-    if (type === "confirmation") {
-      mailOptions = {
-        from: '"Anatha-Web-App@Alpha" <noreply@myapp.com>',
-        to: email,
-        subject: "Confirm Your Registration",
-        text: `Your one-time password for registration is: ${otp}`,
-        html: `<p>Your one-time password for registration is:</p><p style="font-size: 24px; font-weight: bold;">${otp}</p>`,
-      };
-    } else {
-      mailOptions = {
-        from: '"Anatha-Web-App@Alpha" <noreply@myapp.com>',
-        to: email,
-        subject: "Reset Your Password",
-        text: `Please click on the following link to reset your password: ${resetUrl}`,
-        html: `<p>Please click on the following link to reset your password:</p><a href="${resetUrl}" style="font-size: 24px; font-weight: bold;">Reset Password</a>`,
-      };
-    }
-
-    await transporter.sendMail(mailOptions);
+    await sendGrid.send(msg);
     return true;
-  } catch (err) {
+  } catch (error) {
     return false;
   }
 };
