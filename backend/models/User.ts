@@ -32,6 +32,30 @@ const userSchema = new mongoose.Schema<UserModel>({
       type: String,
     },
   },
+  address: {
+    fullName: {
+      type: String,
+    },
+    phoneNumber: {
+      type: String,
+    },
+    fullAddress: {
+      type: String,
+    },
+    postalCode: {
+      type: String,
+    },
+    city: {
+      type: String,
+    },
+    country: {
+      type: String,
+    },
+    tag: {
+      type: String,
+      enum: ["Home", "Office"],
+    },
+  },
   verified: {
     type: Boolean,
     default: false,
@@ -54,7 +78,11 @@ userSchema.pre("save", async function (next) {
     next();
   }
 
-  this.password = await bcrypt.hash(this.password, 10);
+  // Generate a random salt value
+  const salt = await bcrypt.genSalt(10);
+
+  // Hash the password with the generated salt
+  this.password = await bcrypt.hash(this.password, salt);
 });
 
 // Compare user password

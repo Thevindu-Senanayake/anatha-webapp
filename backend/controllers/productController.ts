@@ -2,7 +2,12 @@ import { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
 import cloudinary from "cloudinary";
 
-import { ProductModel, UserModel } from "../types/types";
+import {
+  OrderModel,
+  ProductModel,
+  ReviewInput,
+  UserModel,
+} from "../types/types";
 import Product from "../models/Product";
 import Order from "../models/order";
 import ErrorHandler from "../utils/errorHandler";
@@ -12,10 +17,11 @@ import APIFeatures, { QueryString } from "../utils/apiFeatures";
 // Create new product  => /api/v1/admin/product/new
 export const newProduct = catchAsyncErrors(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { name, price, description, category, stock } = req.body;
+    const { name, price, description, category, stock, shippingPrice } =
+      req.body;
 
     // Validate inputs
-    if (!name || !description || category) {
+    if (!name || !description || !category) {
       return next(
         new ErrorHandler("All Product Details must be provided", 400)
       );
@@ -38,9 +44,13 @@ export const newProduct = catchAsyncErrors(
     }
 
     // Upload images to cloud storage
+    if (!Array.isArray(images)) {
+      return next(new ErrorHandler("Images should be in array format", 400));
+    }
+
     let imagesLinks: ProductModel["images"] = [];
 
-    for (let i = 0; i < images.length; i++) {
+    for (let i = 0; i < images.length && i > 10; i++) {
       const result = await cloudinary.v2.uploader.upload(images[i], {
         folder: "products",
       });
@@ -59,6 +69,7 @@ export const newProduct = catchAsyncErrors(
       description,
       category,
       stock,
+      shippingPrice,
     };
 
     const product = await Product.create(productData);
@@ -132,7 +143,8 @@ export const getSingleProduct = catchAsyncErrors(
 // Update Product  => /api/v1/admin/product/:productId
 export const updateProduct = catchAsyncErrors(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { name, price, description, category, stock, seller } = req.body;
+    const { name, price, description, category, stock, shippingPrice } =
+      req.body;
 
     let product = await Product.findById(req.params.productId);
 
@@ -150,14 +162,17 @@ export const updateProduct = catchAsyncErrors(
     let imagesLinks: ProductModel["images"] = [];
 
     if (images !== undefined) {
-      // Deleting images associated with the product
-      for (let i = 0; i < product.images.length; i++) {
-        const result = await cloudinary.v2.uploader.destroy(
-          product.images[i].public_id
-        );
+      // Check in images are not in array format
+      if (!Array.isArray(images)) {
+        return next(new ErrorHandler("Images should be in array format", 400));
       }
 
-      for (let i = 0; i < images.length; i++) {
+      // Deleting images associated with the product
+      for (let i = 0; i < product.images.length; i++) {
+        await cloudinary.v2.uploader.destroy(product.images[i].public_id);
+      }
+
+      for (let i = 0; i < images.length && i > 10; i++) {
         const result = await cloudinary.v2.uploader.upload(images[i], {
           folder: "products",
         });
@@ -177,7 +192,7 @@ export const updateProduct = catchAsyncErrors(
       description,
       category,
       stock,
-      seller,
+      shippingPrice,
     };
 
     product = await Product.findByIdAndUpdate(
@@ -207,9 +222,7 @@ export const deleteProduct = catchAsyncErrors(
 
     // Deleting images associated with the product
     for (let i = 0; i < product.images.length; i++) {
-      const result = await cloudinary.v2.uploader.destroy(
-        product.images[i].public_id
-      );
+      await cloudinary.v2.uploader.destroy(product.images[i].public_id);
     }
 
     await product.deleteOne();
@@ -222,35 +235,38 @@ export const deleteProduct = catchAsyncErrors(
 );
 
 // Review Functions
-
 // Create new review		=> /api/v1/review
 export const createProductReview = catchAsyncErrors(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { rating, comment } = req.body;
+    const { rating, comment }: ReviewInput = req.body;
     const { productId } = req.params;
 
-    // Check if Requested User Have Purchase the Product
-    const orders = await Order.find({
-      user: req.body.user._id,
-      orderStatus: "Delivered",
-    });
-
-    if (!orders || !Array.isArray(orders) || orders.length === 0) {
+    // Validate user inputs
+    if (
+      !rating ||
+      !comment ||
+      typeof rating !== "number" ||
+      typeof comment !== "string"
+    ) {
       return next(
         new ErrorHandler(
-          "Please Purchase This Product first to add Review",
+          "Rating and comment are required and must be a number and string respectively",
           400
         )
       );
     }
 
-    const isPurchased = orders.some((order) => {
-      return order.orderItems.some((item) => {
-        return item.productId.toString() === productId;
-      });
+    // Check if Requested User Have Purchase the Product
+    const orders: OrderModel[] = await Order.find({
+      user: req.body.user._id,
+      orderStatus: "Delivered",
     });
 
-    if (!isPurchased) {
+    const purchasedOrder: OrderModel | undefined = orders.find((order) =>
+      order.orderItems.some((item) => item.productId.toString() === productId)
+    );
+
+    if (!purchasedOrder) {
       return next(
         new ErrorHandler(
           "Please Purchase This Product first to add Review",
@@ -262,11 +278,11 @@ export const createProductReview = catchAsyncErrors(
     const review = {
       user: req.body.user._id as mongoose.Types.ObjectId,
       name: req.body.user.name as string,
-      rating: Number(rating),
-      comment: comment as string,
+      rating: rating,
+      comment: comment,
     };
 
-    const product = await Product.findById(productId);
+    const product: ProductModel | null = await Product.findById(productId);
 
     if (!product) {
       return next(new ErrorHandler("Product not found", 404));
@@ -274,6 +290,7 @@ export const createProductReview = catchAsyncErrors(
 
     // If User Already Added a Review then get the Index of that review object
     const userReviewIndex = product.reviews.findIndex(
+      // deepcode ignore HTTPSourceWithUncheckedType: <please specify a reason of ignoring this>
       (r) => r.user.toString() === req.body.user._id.toString()
     );
 
@@ -330,32 +347,21 @@ export const deleteReview = catchAsyncErrors(
       return next(new ErrorHandler("Review Id is specified", 400));
     }
 
-    const reviews = product.reviews.filter(
-      (review) => review._id?.toString() !== req.query.id?.toString()
+    // Find the index of the review to delete
+    const reviewIndex = product.reviews.findIndex(
+      (review) => review._id?.toString() === req.query.id
     );
 
-    const numOfReviews = reviews.length;
+    if (reviewIndex !== -1) {
+      return next(
+        new ErrorHandler(`Review not found with Id: ${req.query.id}`, 404)
+      );
+    }
 
-    const rating =
-      product.reviews.reduce((acc, item) => item.rating + acc, 0) /
-      reviews.length;
-
-    await Product.findByIdAndUpdate(
-      req.params.productId,
-      {
-        reviews,
-        rating,
-        numOfReviews,
-      },
-      {
-        new: true,
-        validateBeforeSave: false,
-        useFindAndModify: false,
-      }
-    );
-
-    res.status(200).json({
-      success: true,
-    });
+    // If the review exists, remove it
+    product.reviews.splice(reviewIndex, 1);
+    product.numOfReviews = product.reviews.length;
+    await product.save();
+    res.status(200).json({ success: true, product });
   }
 );

@@ -3,7 +3,7 @@ import { OrderModel } from "../types/types";
 
 const orderSchema = new mongoose.Schema<OrderModel>({
   shippingInfo: {
-    address: {
+    fullAddress: {
       type: String,
       required: true,
     },

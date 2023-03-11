@@ -16,9 +16,19 @@ export interface UserModel extends mongoose.Document {
   resetPasswordToken: string | undefined;
   resetPasswordExpiresAt: Date | undefined;
   createdAt: Date;
+  address: {
+    fullName: string;
+    phoneNumber: string;
+    fullAddress: string;
+    postalCode: string;
+    city: string;
+    country: string;
+    tag: "Home" | "Office";
+  };
   comparePassword: (password: string) => Promise<boolean>;
   getJwt: () => string;
   getResetPasswordToken: () => string;
+  unset: (field: string) => void;
 }
 
 export interface OrderModel extends mongoose.Document {
@@ -84,4 +94,9 @@ export interface ProductModel extends mongoose.Document {
     comment: string;
   }[];
   createdAt: Date;
+}
+
+export interface ReviewInput {
+  rating: number;
+  comment: string;
 }

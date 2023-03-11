@@ -14,6 +14,7 @@ import cloudinary from "cloudinary";
 const options = {
   expires: new Date(Date.now() + 7 * 1000 * 60 * 60 * 24),
   httpOnly: true,
+  secure: true,
 };
 
 // Register a user  => /api/v1/register
@@ -119,6 +120,7 @@ export const verifyRegistration = catchAsyncErrors(
     user.verified = true;
 
     await user.save();
+    await OTP.findByIdAndDelete(otp._id);
 
     res.clearCookie("email", { path: "/" });
     res.clearCookie("name", { path: "/" });
@@ -369,12 +371,92 @@ export const updateUserDetails = catchAsyncErrors(
   }
 );
 
+// Add/Update address of user  => /api/v1/address
+export const updateAddress = catchAsyncErrors(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const {
+      fullName,
+      phoneNumber,
+      fullAddress,
+      postalCode,
+      city,
+      country,
+      tag,
+    } = req.body;
+
+    const requiredFields = [
+      "fullName",
+      "phoneNumber",
+      "fullAddress",
+      "postalCode",
+      "city",
+      "country",
+      "tag",
+    ];
+
+    const isValid = requiredFields.every((field) => {
+      return (
+        typeof req.body[field] === "string" && req.body[field].trim().length > 0
+      );
+    });
+
+    if (!isValid) {
+      return next(new ErrorHandler("All Fields are required!", 400));
+    }
+
+    const user = await User.findByIdAndUpdate(
+      req.body.user._id,
+      {
+        address: {
+          fullName,
+          phoneNumber,
+          fullAddress,
+          postalCode,
+          city,
+          country,
+          tag,
+        },
+      },
+      { new: true }
+    );
+
+    res.status(200).json({ success: true, user });
+  }
+);
+
+// Get User Address  => /api/v1/address
+export const getAddress = catchAsyncErrors(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const address = req.body.user.address;
+
+    if (!address) {
+      return next(new ErrorHandler("You Don't Have Set Any Address", 400));
+    }
+
+    res.status(200).json({ success: true, address });
+  }
+);
+
+// Delete User Address => /api/v1/address
+export const deleteAddress = catchAsyncErrors(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const user = await User.findByIdAndUpdate(
+      req.body.user._id,
+      { $unset: { address: 1 } },
+      { new: true }
+    );
+
+    res.status(200).json({ success: true, user });
+  }
+);
+
 // Logout user  => /api/v1/logout
 export const logoutUser = catchAsyncErrors(
   async (req: Request, res: Response, next: NextFunction) => {
     res.cookie("token", null, {
       expires: new Date(Date.now()),
       httpOnly: true,
+      secure: true,
     });
 
     res.status(200).json({

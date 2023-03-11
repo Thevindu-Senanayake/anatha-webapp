@@ -11,12 +11,10 @@ const productSchema = new mongoose.Schema<ProductModel>({
   price: {
     type: Number,
     required: [true, "Please enter price for product"],
-    default: 0.0,
   },
   shippingPrice: {
     type: Number,
     required: [true, "Please enter shipping price for product"],
-    default: 0.0,
   },
   description: {
     type: String,

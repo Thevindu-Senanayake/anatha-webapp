@@ -5,30 +5,87 @@ import Product from "../models/Product";
 
 import ErrorHandler from "../utils/errorHandler";
 import catchAsyncErrors from "../middleware/catchAsyncErrors";
-import { OrderModel } from "../types/types";
+import { OrderModel, UserModel } from "../types/types";
 
 // Create a new order	=> /api/v1/order/new
 export const newOrder = catchAsyncErrors(
   async (req: Request, res: Response, next: NextFunction) => {
     const { orderItems, shippingInfo, paymentInfo } = req.body;
 
+    let shippingDetails: UserModel["address"];
+
+    // Get Default Shipping Address If Address not provided & If Address provided then validate it
+    if (!shippingInfo) {
+      if (!req.body.user.address) {
+        return next(
+          new ErrorHandler(
+            "You Don't have any Default address information! Please Provide a shipping address",
+            400
+          )
+        );
+      }
+      shippingDetails = req.body.user.address;
+    } else {
+      const {
+        fullName,
+        phoneNumber,
+        fullAddress,
+        postalCode,
+        city,
+        country,
+        tag,
+      } = shippingInfo;
+
+      if (
+        !fullName ||
+        !phoneNumber ||
+        !fullAddress ||
+        !postalCode ||
+        !city ||
+        !country ||
+        !tag
+      ) {
+        return next(
+          new ErrorHandler("All fields of Address are required", 400)
+        );
+      }
+
+      shippingDetails = shippingInfo;
+    }
+
     // Get items price
+    // Additionally Ordered Products are Validating
     let itemsPrice = 0;
     let shippingPrice = 0;
-    orderItems.forEach(
-      async (item: { quantity: number; productId: string }) => {
-        const product = await Product.findById(item.productId);
-        if (!product) {
-          return next(new ErrorHandler("Something went wrong!", 500));
-        }
-        itemsPrice = product.price * item.quantity;
-        shippingPrice = product.shippingPrice;
+    for (const item of orderItems) {
+      const product = await Product.findById(item.productId);
+      if (!product) {
+        return next(
+          new ErrorHandler(`Product Not Found with Id: ${item.productId}`, 400)
+        );
       }
-    );
+      // Check if Product out of stock
+      if (product.stock === 0) {
+        return next(
+          new ErrorHandler(`Product ${product._id} is out of stock`, 400)
+        );
+      }
+      if (product.stock < item.quantity) {
+        // Check if user trying to Purchase a product more than stock available
+        return next(
+          new ErrorHandler(
+            `Product ${item.productId} only has ${product.stock} stock available`,
+            400
+          )
+        );
+      }
+      itemsPrice = product.price * item.quantity;
+      shippingPrice = product.shippingPrice;
+    }
 
     const order = await Order.create({
       orderItems,
-      shippingInfo,
+      shippingInfo: shippingDetails,
       itemsPrice,
       shippingPrice,
       totalPrice: itemsPrice + shippingPrice,
@@ -53,7 +110,9 @@ export const getSingleOrderDetails = catchAsyncErrors(
     );
 
     if (!order) {
-      return next(new ErrorHandler("no order found with this ID", 404));
+      return next(
+        new ErrorHandler(`Order Not Found with Id: ${req.params.id}`, 404)
+      );
     }
 
     res.status(200).json({
@@ -76,7 +135,6 @@ export const myOrders = catchAsyncErrors(
 );
 
 // Admin Routes
-
 // Get all orders	=> /api/v1/admin/orders
 export const allOrders = catchAsyncErrors(
   async (req: Request, res: Response, next: NextFunction) => {
